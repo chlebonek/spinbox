@@ -161,7 +161,7 @@ $('#prev').innerHTML=svg(I.prev);$('#next').innerHTML=svg(I.next);$('#shuf').inn
 /* theme */
 const root=document.documentElement;
 const isDark=()=>root.dataset.theme==='dark';
-function paintTheme(){$('#theme').innerHTML=svg(isDark()?I.sun:I.moon)}
+function paintTheme(){$('#theme').innerHTML=svg(isDark()?I.sun:I.moon);const tc=document.querySelector('meta[name=theme-color]');if(tc)tc.content=isDark()?'#0a0a0a':'#f3f3f3'}
 try{const s=localStorage.getItem('spinbox-theme');if(s)root.dataset.theme=s}catch(e){}
 $('#theme').onclick=()=>{root.dataset.theme=isDark()?'light':'dark';try{localStorage.setItem('spinbox-theme',root.dataset.theme)}catch(e){}paintTheme()};
 paintTheme();
@@ -326,9 +326,15 @@ addEventListener('drop',e=>add(e.dataTransfer.files));
     x.strokeStyle='#999';x.lineWidth=2;x.beginPath();x.arc(90,90,46,0,7);x.stroke();
     x.fillStyle='#111';x.beginPath();x.arc(90,90,22,0,7);x.fill();
     const png=c.toDataURL('image/png');
-    const l=document.createElement('link');l.rel='apple-touch-icon';l.href=png;document.head.appendChild(l);
+    const rc=document.createElement('canvas');rc.width=rc.height=512;const r=rc.getContext('2d');
+    r.fillStyle='#111';r.beginPath();r.arc(256,256,256,0,7);r.fill();
+    r.fillStyle='#f3f3f3';r.beginPath();r.arc(256,256,180,0,7);r.fill();
+    r.strokeStyle='#999';r.lineWidth=5;r.beginPath();r.arc(256,256,130,0,7);r.stroke();
+    r.fillStyle='#111';r.beginPath();r.arc(256,256,62,0,7);r.fill();
+    const rpng=rc.toDataURL('image/png');
+    const l=document.createElement('link');l.rel='apple-touch-icon';l.href=/iphone|ipad|ipod/i.test(navigator.userAgent)?png:rpng;document.head.appendChild(l);
     const m=document.createElement('link');m.rel='manifest';
-    m.href=URL.createObjectURL(new Blob([JSON.stringify({name:'Spinbox',short_name:'Spinbox',display:'fullscreen',background_color:'#f3f3f3',theme_color:'#111111',start_url:location.href,icons:[{src:png,sizes:'180x180',type:'image/png'}]})],{type:'application/manifest+json'}));
+    m.href=URL.createObjectURL(new Blob([JSON.stringify({name:'Spinbox',short_name:'Spinbox',display:'standalone',background_color:'#f3f3f3',theme_color:'#f3f3f3',start_url:location.href,icons:[{src:rpng,sizes:'512x512',type:'image/png',purpose:'any'}]})],{type:'application/manifest+json'}));
     document.head.appendChild(m);
   }catch(e){}
   const b=$('#inst'),tip=$('#tip');
