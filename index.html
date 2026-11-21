@@ -332,9 +332,15 @@ addEventListener('drop',e=>add(e.dataTransfer.files));
     r.strokeStyle='#999';r.lineWidth=5;r.beginPath();r.arc(256,256,130,0,7);r.stroke();
     r.fillStyle='#111';r.beginPath();r.arc(256,256,62,0,7);r.fill();
     const rpng=rc.toDataURL('image/png');
-    const l=document.createElement('link');l.rel='apple-touch-icon';l.href=/iphone|ipad|ipod/i.test(navigator.userAgent)?png:rpng;document.head.appendChild(l);
+    const sc=document.createElement('canvas');sc.width=sc.height=512;const s=sc.getContext('2d');
+    s.fillStyle='#111';s.beginPath();(s.roundRect||s.rect).call(s,28,28,456,456,104);s.fill();
+    s.fillStyle='#f3f3f3';s.beginPath();s.arc(256,256,168,0,7);s.fill();
+    s.strokeStyle='#999';s.lineWidth=5;s.beginPath();s.arc(256,256,122,0,7);s.stroke();
+    s.fillStyle='#111';s.beginPath();s.arc(256,256,58,0,7);s.fill();
+    const sq=sc.toDataURL('image/png'),and=/android/i.test(navigator.userAgent);
+    const l=document.createElement('link');l.rel='apple-touch-icon';l.href=and?rpng:sq;document.head.appendChild(l);
     const m=document.createElement('link');m.rel='manifest';
-    m.href=URL.createObjectURL(new Blob([JSON.stringify({name:'Spinbox',short_name:'Spinbox',display:'standalone',background_color:'#f3f3f3',theme_color:'#f3f3f3',start_url:location.href,icons:[{src:rpng,sizes:'512x512',type:'image/png',purpose:'any'}]})],{type:'application/manifest+json'}));
+    m.href=URL.createObjectURL(new Blob([JSON.stringify({name:'Spinbox',short_name:'Spinbox',display:'standalone',background_color:'#f3f3f3',theme_color:'#f3f3f3',start_url:location.href,icons:[{src:and?rpng:sq,sizes:'512x512',type:'image/png',purpose:'any'}]})],{type:'application/manifest+json'}));
     document.head.appendChild(m);
   }catch(e){}
   const b=$('#inst'),tip=$('#tip');
